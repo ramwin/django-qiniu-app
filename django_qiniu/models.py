@@ -9,6 +9,7 @@ class Bucket(models.Model):
     access_key = models.SlugField(blank=False)
     secret_key = models.SlugField(blank=False)
     domain = models.CharField(blank=False, max_length=127)
+    https = models.BooleanField("是否使用https", default=True)
 
     @property
     def qiniu_auth(self):
@@ -24,6 +25,9 @@ class Bucket(models.Model):
         self._bucket_manager = BucketManager(self.qiniu_auth)
         return self._bucket_manager
 
+    def __str__(self):
+        return "七牛的Bucket: {}".format(self.name)
+
 
 class Resource(models.Model):
     """七牛的资源"""
@@ -33,3 +37,13 @@ class Resource(models.Model):
 
     class Meta:
         unique_together = ("bucket", "key")
+
+    def __str__(self):
+        return "七牛的资源: {}/{}".format(self.bucket.name, self.key)
+
+    def url(self):
+        if self.bucket.https:
+            protocal = "https"
+        else:
+            protocal = "http"
+        return "{}://{}/{}".format(protocal, self.bucket.domain, self.key)
