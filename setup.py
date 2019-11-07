@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="django-qiniu-app",
-    version="0.0.2",
+    version="0.0.3",
     author="Xiang Wang",
     author_email="ramwin@qq.com",
     description="django的七牛app",
@@ -24,7 +24,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        "django>=2",
+        "django",
         "djangorestframework",
         "qiniu",
     ],
