@@ -19,8 +19,14 @@ class Command(BaseCommand):
         for bucket in Bucket.objects.all():
             log.info("处理{}".format(bucket))
             marker = None
-            ret, eof, info = bucket.bucket_manager.list(bucket.name, marker=marker)
-            if eof is True:
-                log.info("处理完毕")
+            eof = False
+            count = 0
+            while eof is False:
+                ret, eof, info = bucket.bucket_manager.list(
+                    bucket.name, marker=marker)
+                count += len(ret["items"])
                 for itemdata in ret["items"]:
                     Resource.objects.get_or_create(bucket=bucket, key=itemdata["key"])
+                    time.sleep(0.001)
+                log.info("处理了{}条数据".format(count))
+            log.info("处理完毕")

@@ -9,7 +9,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="django-qiniu-app",
-    version="0.0.1",
+    version="0.0.2",
     author="Xiang Wang",
     author_email="ramwin@qq.com",
     description="django的七牛app",
