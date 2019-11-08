@@ -1,4 +1,5 @@
 from django.db import models
+import json
 from qiniu import Auth, BucketManager
 
 
@@ -41,6 +42,7 @@ class Resource(models.Model):
     def __str__(self):
         return "七牛的资源: {}/{}".format(self.bucket.name, self.key)
 
+    @property
     def url(self):
         if self.bucket.https:
             protocal = "https"
