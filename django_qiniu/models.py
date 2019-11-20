@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
+import logging
 from django.db import models
 import json
 from qiniu import Auth, BucketManager
 from django.db.models.signals import post_delete
+
+
+log = logging.getLogger(__name__)
 
 
 class Bucket(models.Model):
@@ -54,6 +58,8 @@ class Resource(models.Model):
 
     @classmethod
     def post_delete(self, sender, instance, **kwargs):
+        log.info("删除七牛资源")
+        log.info(instance)
         ret, info = instance.bucket.bucket_manager.delete(instance.bucket.name, instance.key)
         assert ret == {}
 
