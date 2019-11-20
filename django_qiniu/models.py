@@ -2,6 +2,7 @@
 from django.db import models
 import json
 from qiniu import Auth, BucketManager
+from django.db.models.signals import post_delete
 
 
 class Bucket(models.Model):
@@ -50,3 +51,11 @@ class Resource(models.Model):
         else:
             protocal = "http"
         return "{}://{}/{}".format(protocal, self.bucket.domain, self.key)
+
+    @classmethod
+    def post_delete(self, sender, instance, **kwargs):
+        ret, info = instance.bucket.bucket_manager.delete(instance.bucket.name, instance.key)
+        assert ret == {}
+
+
+post_delete.connect(Resource.post_delete, sender=Resource)
