@@ -30,7 +30,7 @@ class Command(BaseCommand):
             while eof is False:
                 ret, eof, info = bucket.bucket_manager.list(bucket.name,
                                                             marker=marker)
-                marker = ret["marker"]
+                marker = ret.get("marker", None)
                 count += len(ret["items"])
                 keys = map(lambda x: x["key"], ret["items"])
                 if Resource.objects.filter(bucket=bucket, key__in=keys).count() == len(ret["items"]):
