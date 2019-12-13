@@ -21,9 +21,9 @@ class Bucket(models.Model):
     @property
     def qiniu_auth(self):
         if hasattr(self, "_qiniu_auth"):
-            return self._aqiniu_uth
-        self._aqiniu_uth = Auth(self.access_key, self.secret_key)
-        return self._aqiniu_uth
+            return self._qiniu_auth
+        self._qiniu_auth = Auth(self.access_key, self.secret_key)
+        return self._qiniu_auth
 
     @property
     def bucket_manager(self):
