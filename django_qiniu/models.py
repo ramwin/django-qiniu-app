@@ -65,7 +65,7 @@ class Resource(models.Model):
 
 
 class Token(models.Model):
-    key = models.CharField(max_length=255, primary_key=True)
+    key = models.CharField(max_length=64, primary_key=True)
     bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE)
     token = models.TextField()
 
