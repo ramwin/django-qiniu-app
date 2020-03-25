@@ -3,7 +3,7 @@ import logging
 from django.db import models
 import json
 from qiniu import Auth, BucketManager
-from django.db.models.signals import post_delete
+from django.db.models.signals import post_delete, pre_save
 
 
 log = logging.getLogger(__name__)
@@ -64,4 +64,18 @@ class Resource(models.Model):
         assert ret == {}
 
 
+class Token(models.Model):
+    key = models.CharField(max_length=255, primary_key=True)
+    bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE)
+    token = models.TextField()
+
+    @classmethod
+    def pre_save(clas, sender, instance, **kwargs):
+        if instance.token:
+            return
+        instance.token = instance.bucket.qiniu_auth.upload_token(
+            instance.bucket.name, instance.key, 3600)
+
+
 post_delete.connect(Resource.post_delete, sender=Resource)
+pre_save.connect(Token.pre_save, sender=Token)
