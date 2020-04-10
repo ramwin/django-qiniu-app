@@ -2,7 +2,7 @@
 import logging
 from django.db import models
 import json
-from qiniu import Auth, BucketManager
+from qiniu import Auth, BucketManager, AudioManager
 from django.db.models.signals import post_delete, pre_save
 
 
