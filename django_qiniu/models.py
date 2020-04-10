@@ -36,11 +36,22 @@ class Bucket(models.Model):
         return "七牛的Bucket: {}".format(self.name)
 
 
+class LiveBucket(models.Model):
+    """直播的空间"""
+    name = models.SlugField(primary_key=True)
+    bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE)
+    push_domain = models.CharField("直播推流域名", max_length=127)
+    play_domain_rtmp = models.CharField("直播推流域名rtmp", max_length=127)
+    play_domain_hls = models.CharField("直播推流域名hls", max_length=127)
+    play_domain_hdl = models.CharField("直播推流域名hdl", max_length=127)
+
+
 class Resource(models.Model):
     """七牛的资源"""
     bucket = models.ForeignKey(Bucket, on_delete=models.CASCADE)
     key = models.CharField("文件名", blank=False, max_length=127)
     # TODO size, updatetime, filetype, storagetype
+    _duration = models.FloatField(null=True)
 
     class Meta:
         unique_together = ("bucket", "key")
@@ -62,6 +73,16 @@ class Resource(models.Model):
         log.info(instance)
         ret, info = instance.bucket.bucket_manager.delete(instance.bucket.name, instance.key)
         assert ret == {}
+
+    @property
+    def duration(self):
+        if self._duration is not None:
+            return self._duration
+        audio_manager = AudioManager(self.bucket.qiniu_auth)
+        ret, info = audio_manager.avinfo(self.url)
+        self._duration = float(ret["format"]["duration"])
+        self.save()
+        return self._duration
 
 
 class Token(models.Model):
